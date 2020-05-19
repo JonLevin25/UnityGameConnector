@@ -104,11 +104,13 @@ public class GameManifestTool : EditorWindow
     private static (Type inputType, Type outputType) GetPayloadTypes(LevelManagerBase levelManager)
     {
         var lvlManagerType = levelManager.GetType();
-        var isGenericLevelManager = lvlManagerType.IsAssignableFrom(typeof(LevelManagerBase<,>));
-        if (isGenericLevelManager)
+        
+        // will return specified generic type e.g. typeof(LevelManager<Element, End>)
+        var lvlManagerGenericType = lvlManagerType.GetGenericBaseType(typeof(LevelManagerBase<,>)); 
+        if (lvlManagerGenericType != null)
         {
             // Find types (e.g. LevelManager<ElementPayload, EndPayload>) 
-            var genericArgs = lvlManagerType.GenericTypeArguments;
+            var genericArgs = lvlManagerGenericType.GenericTypeArguments;
             var inpType = genericArgs[0];
             var outType = genericArgs[1];
 
