@@ -9,22 +9,22 @@ namespace Common
     [Serializable]
     public class Runtime_ConnectedGame
     {
-        [SerializeField] private Type inputPayloadType;
-        [SerializeField] private Type outputPayloadType;
-        [SerializeField] private int sceneBuildIdx;
+        [ReadOnly, SerializeField] private string inputPayloadTypeName;
+        [ReadOnly, SerializeField] private string outputPayloadTypeName;
+        [ReadOnly, SerializeField] private int sceneBuildIdx;
 
         // Types Not in use currently - but good to have this info
         // as we might want to connect games via payload type (dynamically) in the future
-        public Type InputPayloadType => inputPayloadType;
-        public Type OutputPayloadType => outputPayloadType;
+        public string InputPayloadTypeName => inputPayloadTypeName;
+        public string OutputPayloadTypeName => outputPayloadTypeName;
         public int SceneBuildIdx => sceneBuildIdx;
 
-        public Runtime_ConnectedGame(Type inputPayloadType, Type outputPayloadType, int sceneBuildIdx)
+        public Runtime_ConnectedGame(Type inputPayloadTypeName, Type outputPayloadTypeName, int sceneBuildIdx)
         {
-            if (!Helper.ValidatePayloadTypes(inputPayloadType, outputPayloadType)) return;
+            if (!Helper.ValidatePayloadTypes(inputPayloadTypeName, outputPayloadTypeName)) return;
             
-            this.inputPayloadType = inputPayloadType;
-            this.outputPayloadType = outputPayloadType;
+            this.inputPayloadTypeName = inputPayloadTypeName.FullName;
+            this.outputPayloadTypeName = outputPayloadTypeName.FullName;
             this.sceneBuildIdx = sceneBuildIdx;
         }
     }
