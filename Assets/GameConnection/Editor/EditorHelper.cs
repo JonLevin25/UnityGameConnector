@@ -81,5 +81,34 @@ namespace Common.Editor
                 }
             }
         }
+        
+        // https://stackoverflow.com/questions/457676/check-if-a-class-is-derived-from-a-generic-class
+        public static bool IsSubclassOfRawGeneric(this Type myType, Type generic) {
+            while (myType != null && myType != typeof(object)) {
+                if (myType.IsGenericType && myType.GetGenericTypeDefinition() == generic)
+                    return true;
+                
+                myType = myType.BaseType;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Find
+        /// </summary>
+        /// <param name="myType"></param>
+        /// <param name="rawGeneric">The </param>
+        public static Type GetGenericBaseType(this Type myType, Type rawGeneric)
+        {
+            while (myType != null && myType != typeof(object))
+            {
+                if (myType.IsGenericType && myType.GetGenericTypeDefinition() == rawGeneric) 
+                    return myType;
+
+                myType = myType.BaseType;
+            }
+
+            return null;
+        }
     }
 }
