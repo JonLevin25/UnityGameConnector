@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Common;
 using Common.Editor;
 using Common.Scripts.PayloadTypes;
@@ -35,6 +36,7 @@ public class GameManifestTool : EditorWindow
         if (manifest) return manifest;
 
         manifest = ScriptableObject.CreateInstance<GameManifest>();
+        Undo.RegisterCreatedObjectUndo(manifest, "Created game manifest");
         EditorHelper.CreateAndSaveAsset(EditorConsts.ManifestAssetPath, manifest);
 
         return manifest;
@@ -42,11 +44,19 @@ public class GameManifestTool : EditorWindow
 
     private static void SetManifestGames(GameManifest manifest, IEnumerable<Runtime_ConnectedGame> games)
     {
-        var serializedManifest = new SerializedObject(manifest);
-        var connectedGamesProp = serializedManifest.FindProperty("connectedGames");
-        EditorHelper.SetArrayMangedRefs(connectedGamesProp, games.ToArray());
+        // var serializedManifest = new SerializedObject(manifest);
+        // var connectedGamesProp = serializedManifest.FindProperty("connectedGames");
         
-        serializedManifest.ApplyModifiedProperties();
+        
+        Undo.RegisterCompleteObjectUndo(manifest, "Set Connected Games");
+        var gamesFieldInfo = typeof(GameManifest)
+            .GetField("connectedGames", BindingFlags.Instance | BindingFlags.NonPublic);
+        
+        gamesFieldInfo.SetValue(manifest, games.ToArray());
+        EditorUtility.SetDirty(manifest);
+        
+        
+        // serializedManifest.ApplyModifiedProperties();
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
@@ -57,7 +67,7 @@ public class GameManifestTool : EditorWindow
         return new Runtime_ConnectedGame(editorGame.InputPayloadType, editorGame.OutputPayloadType, buildIdx);
     }
 
-    private static Editor_ConnectedGame[] FindGamesInProject()
+    private static IEnumerable<Editor_ConnectedGame> FindGamesInProject()
     {
         var scenesWithLevelManagers = FindScenesWithLevelManagers();
         var games = scenesWithLevelManagers
@@ -68,7 +78,7 @@ public class GameManifestTool : EditorWindow
                 return new Editor_ConnectedGame(inputType, outputType, scene);
             });
 
-        return games.ToArray();
+        return games;
     }
 
     private static IEnumerable<(string scenePath, LevelManagerBase)> FindScenesWithLevelManagers()
