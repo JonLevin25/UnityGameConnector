@@ -18,7 +18,8 @@ namespace Common
 
         public Editor_ConnectedGame(Type inputPayloadType, Type outputPayloadType, string scenePath)
         {
-            if (!Helper.ValidatePayloadTypes(inputPayloadType, outputPayloadType)) return;
+            if (!Helper.ValidatePayloadTypes(inputPayloadType, outputPayloadType)) 
+                throw new Exception($"Failed to create {GetType().Name}");
             
             this.inputPayloadType = inputPayloadType;
             this.outputPayloadType = outputPayloadType;

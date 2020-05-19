@@ -28,6 +28,6 @@ namespace Common
             return true;
         }
         
-        public static bool IsScenePayloadType(Type t) => t.IsAssignableFrom(typeof(ScenePayloadBase));
+        public static bool IsScenePayloadType(Type t) => typeof(ScenePayloadBase).IsAssignableFrom(t);
     }
 }
