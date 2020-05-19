@@ -124,9 +124,16 @@ public class GameManifestTool : EditorWindow
 
     private static GameObject[] GetRootGameObjects(string scenePath)
     {
-        // TODO 
         var scene = EditorSceneManager.GetSceneByPath(scenePath);
-        // var sceneWasOpen = scene;
-        throw new NotImplementedException();
+        var wasLoaded = scene.isLoaded;
+        if (!wasLoaded)
+        {
+            scene = EditorSceneManager.OpenScene(scenePath);
+        }
+
+        var rootGOs = scene.GetRootGameObjects();
+        if (!wasLoaded) EditorSceneManager.CloseScene(scene, true);
+
+        return rootGOs;
     }
 }
