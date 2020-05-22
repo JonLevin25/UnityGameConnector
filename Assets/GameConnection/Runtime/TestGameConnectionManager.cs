@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using GameConnection;
 using GameConnection.Payloads;
+using GameConnection.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,7 +13,10 @@ using UnityEngine.SceneManagement;
 public class TestGameConnectionManager : MonoBehaviour
 {
     [SerializeField] private ConnectionDebugOverlay debugOverlay;
-    
+    [SerializeField] private GameCompletedMenu gameCompletedMenu;
+
+    private ScenePayloadBase _currPayload;
+    private ScenePayloadBase _nextPayload; // Has value only after level finished and before user clicked 'next'/'restart' game
     private GameManifest _manifest;
     private int _gameIdx = -1;
 
@@ -24,12 +28,34 @@ public class TestGameConnectionManager : MonoBehaviour
     
     public void Init()
     {
+        gameCompletedMenu.Init(OnRestartGameClicked, OnNextGameClicked);
         LoadManifest();
         LoadNextGame(new StartPayload());
     }
 
+    private void OnRestartGameClicked() => RestartCurrGame();
+
+    private void OnNextGameClicked()
+    {
+        if (_nextPayload is EndPayload)
+        {
+            StartCoroutine(EndSeries());
+        }
+        else
+        {
+            LoadNextGame(_nextPayload);
+        }
+    }
+
+    private void RestartCurrGame()
+    {
+        Debug.Log("Restarting curr game");
+        StartCoroutine(InitGame(_gameIdx, _currPayload));
+    }
+
     private void LoadNextGame(ScenePayloadBase payload)
     {
+        _currPayload = payload;
         _gameIdx++;
         if (_manifest.Games.Length <= _gameIdx)
         {
@@ -38,15 +64,18 @@ public class TestGameConnectionManager : MonoBehaviour
             return;
         }
         
-        StartCoroutine(InitCurrGame(payload));
+        StartCoroutine(InitGame(_gameIdx, payload));
     }
     
-    private IEnumerator InitCurrGame(ScenePayloadBase payload)
+    private IEnumerator InitGame(int gameIdx, ScenePayloadBase payload)
     {
         Debug.Log($"Initializing Game");
-        debugOverlay.SetGame(_gameIdx, payload.ToString());
+
+        _nextPayload = null;
+        gameCompletedMenu.gameObject.SetActive(false);
+        debugOverlay.SetGame(gameIdx, payload.ToString());
         
-        var buildIdx = _manifest.GetGameSceneBuildIdx(_gameIdx);
+        var buildIdx = _manifest.GetGameSceneBuildIdx(gameIdx);
         
         SceneManager.LoadScene(buildIdx);
         yield return null; // Wait frame for scene to load
@@ -69,20 +98,14 @@ public class TestGameConnectionManager : MonoBehaviour
         var levelManager = (LevelManagerBase) sender;
         Debug.Log($"Level ended! ({levelManager.name})");
         levelManager.OnEnd -= OnLevelEnd;
-
-        if (payload is EndPayload)
-        {
-            StartCoroutine(EndSeries());
-        }
-        else
-        {
-            LoadNextGame(payload);
-        }
+        _nextPayload = payload;
+        gameCompletedMenu.gameObject.SetActive(true);
     }
     
     private IEnumerator EndSeries()
     {
         Debug.Log("Ending Game Series!");
+        gameCompletedMenu.gameObject.SetActive(false);
         debugOverlay.SetEndScene();
         
         var endIdx = _manifest.EndSceneIdx;
