@@ -34,6 +34,8 @@ public static class GameManifestTool
 
             var manifest = GetOrCreateManifest();
             SetManifestGames(manifest, games);
+            EditorGUIUtility.PingObject(manifest);
+            Selection.activeObject = manifest;
         }
         finally
         {

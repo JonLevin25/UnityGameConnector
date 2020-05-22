@@ -29,7 +29,8 @@ public class GameConnectionToolEditorWindow : EditorWindow
 
     private void OnGUI()
     {
-        var updateManifestButtonLabel = _manifestFound ? "Update Game Manifest" : "Find Games";
+        var updateManifestButtonLabel = _manifestFound ? "Regenerate Game Manifest" : "Find Games";
+        GUILayout.Label("Game Manifest", EditorStyles.boldLabel);
         if (GUILayout.Button(updateManifestButtonLabel))
         {
             GameManifestTool.GenerateManifest();
@@ -38,6 +39,22 @@ public class GameConnectionToolEditorWindow : EditorWindow
         
         using (new EditorGUI.DisabledScope(!_manifestFound))
         {
+            if (GUILayout.Button("Show Manifest"))
+            {
+                var manifest = LoadManifest();
+                EditorGUIUtility.PingObject(manifest);
+                Selection.activeObject = manifest; 
+            }
+            
+            GUILayout.Space(EditorGUIUtility.singleLineHeight);
+            
+            GUILayout.Label("Scene Config", EditorStyles.boldLabel);
+            if (GUILayout.Button("Set Build Indices"))
+            {
+                var manifest = LoadManifest();
+                GameManifestTool.SetBuildIndices(manifest, _startScene, _endScene);
+            }
+            
             EditorGUI.BeginChangeCheck();
             _startScene = (SceneAsset) EditorGUILayout.ObjectField("Start Scene", _startScene, typeof(SceneAsset), false);
             _endScene = (SceneAsset) EditorGUILayout.ObjectField("End Scene", _endScene, typeof(SceneAsset), false);
@@ -45,12 +62,6 @@ public class GameConnectionToolEditorWindow : EditorWindow
             {
                 Debug.Log("Changed!");
                 SaveData();
-            }
-
-            if (GUILayout.Button("Set Build Indices"))
-            {
-                var manifest = LoadManifest();
-                GameManifestTool.SetBuildIndices(manifest, _startScene, _endScene);
             }
         }
     }
