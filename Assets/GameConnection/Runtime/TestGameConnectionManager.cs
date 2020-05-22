@@ -10,13 +10,15 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class TestGameConnectionManager : MonoBehaviour
 {
-    [SerializeField] private bool initOnStart;
+    [SerializeField] private ConnectionDebugOverlay _debugOverlay;
+    
     private GameManifest _manifest;
     private int _gameIdx = -1;
 
     private void Start()
     {
-        if (initOnStart) Init();
+        DontDestroyOnLoad(gameObject);
+        Init();
     }
     
     public void Init()
@@ -78,6 +80,9 @@ public class TestGameConnectionManager : MonoBehaviour
         Debug.Log("Ending Game Series!");
         var endIdx = _manifest.EndSceneIdx;
         SceneManager.LoadScene(endIdx);
+        
+        var endController = FindObjectOfType<EndSceneController>();
+        endController.Init(_manifest);
     }
 
     private void LoadManifest()
