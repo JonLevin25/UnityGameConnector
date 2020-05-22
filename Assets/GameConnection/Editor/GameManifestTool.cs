@@ -55,21 +55,18 @@ public static class GameManifestTool
 
     private static void SetManifestGames(GameManifest manifest, ConnectedGame[] games)
     {
-        var serializedManifest = new SerializedObject(manifest);
-        
-        var connectedGamesProp = serializedManifest.FindProperty("connectedGames");
-        Undo.RegisterCompleteObjectUndo(manifest, "Set Connected Games");
-        
-        EditorHelper.SetArrayObjectRefs(connectedGamesProp, games, 
-            (prop, game) => game.CopyTo(prop));
-        
-        serializedManifest.ApplyModifiedProperties();
-        
-        EditorUtility.SetDirty(manifest);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
+
+        EditorHelper.UpdateAndSaveAsset(
+            manifest,
+            serializedManifest =>
+            {
+                var connectedGamesProp = serializedManifest.FindProperty("connectedGames");
+                EditorHelper.SetArrayObjectRefs(connectedGamesProp, games, 
+                    (prop, game) => game.CopyTo(prop));
+            }, 
+            "Set GameManifest Connected Games"
+        );
     }
-    
     private static IEnumerable<ConnectedGame> FindGamesInProject()
     {
         var scenesWithLevelManagers = FindScenesWithLevelManagers();

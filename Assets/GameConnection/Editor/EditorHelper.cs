@@ -40,6 +40,24 @@ namespace GameConnection.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
+        
+        public static void UpdateAndSaveAsset(Object asset, Action<SerializedObject> updateFunc, string undoName)
+        {
+            if (updateFunc == null) throw new ArgumentNullException();
+        
+            using (var serializedManifest = new SerializedObject(asset))
+            {
+                Undo.RegisterCompleteObjectUndo(asset, undoName);
+            
+                updateFunc(serializedManifest);
+                serializedManifest.ApplyModifiedProperties();
+        
+                EditorUtility.SetDirty(asset);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
+        }
+
 
         public static void SetArrayObjectRefs<T>(SerializedProperty arrayProp, IReadOnlyList<T> values, Action<SerializedProperty, T> setter)
         {
