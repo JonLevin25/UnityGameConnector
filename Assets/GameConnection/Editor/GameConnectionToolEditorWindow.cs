@@ -2,6 +2,7 @@
 using GameConnection;
 using GameConnection.Editor;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class GameConnectionToolEditorWindow : EditorWindow
@@ -53,6 +54,12 @@ public class GameConnectionToolEditorWindow : EditorWindow
             {
                 var manifest = LoadManifest();
                 GameManifestTool.SetBuildIndices(manifest, _startScene, _endScene);
+            }
+
+            if (GUILayout.Button("Load Start Scene"))
+            {
+                var scenePath = AssetDatabase.GetAssetPath(_startScene);
+                EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
             }
             
             EditorGUI.BeginChangeCheck();
