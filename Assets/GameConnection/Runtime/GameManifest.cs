@@ -27,6 +27,9 @@ namespace GameConnection
         
         public ConnectedGame[] Games => connectedGames;
         public int StartSceneIdx => startSceneIdx;
+        public int FirstGameIdx => firstGameIdx;
+        public int LastGameIdx => firstGameIdx + Games.Length - 1;
+
         public int EndSceneBuildIdx => startSceneIdx;
     }
 }
