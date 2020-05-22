@@ -44,7 +44,7 @@ public class TestGameConnectionManager : MonoBehaviour
     private IEnumerator InitCurrGame(ScenePayloadBase payload)
     {
         Debug.Log($"Initializing Game");
-        debugOverlay.SetGameIdx(_gameIdx);
+        debugOverlay.SetGame(_gameIdx, payload.ToString());
         
         var buildIdx = _manifest.GetGameSceneBuildIdx(_gameIdx);
         

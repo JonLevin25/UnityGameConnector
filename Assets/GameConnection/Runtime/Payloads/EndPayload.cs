@@ -1,4 +1,6 @@
 namespace GameConnection.Payloads
 {
-    public class EndPayload : ScenePayloadBase { }
+    public class EndPayload : ScenePayloadBase {
+        public override string ToString() => "EndPayload";
+    }
 }

@@ -8,5 +8,10 @@ namespace GameConnection.Payloads
         {
             Element = element;
         }
+
+        public override string ToString()
+        {
+            return Element.ToString();
+        }
     }
 }
