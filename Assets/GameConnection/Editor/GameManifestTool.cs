@@ -20,7 +20,7 @@ public static class GameManifestTool
         set => _scenesToClose = value;
     }
 
-    [MenuItem(EditorConsts.MenuItemsPrefix + "Generate Editor Manifest")]
+    // [MenuItem(EditorConsts.MenuItemsPrefix + "Generate Editor Manifest")]
     public static void GenerateManifest()
     {
         var userConfirm =

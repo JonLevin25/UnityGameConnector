@@ -15,7 +15,7 @@ public class GameConnectionToolEditorWindow : EditorWindow
     private const string StartScenePathKey = EditorPrefsPrefix + "startScene";
     private const string EndScenePathKey = EditorPrefsPrefix + "endScene";
     
-    [MenuItem(EditorConsts.MenuItemsPrefix + "Tool Window", priority = 1)]
+    [MenuItem(EditorConsts.MenuItemsPrefix + "Config Tool", priority = 1)]
     public static void ShowWindow()
     {
         GetWindow<GameConnectionToolEditorWindow>("Game Connection Tool");
