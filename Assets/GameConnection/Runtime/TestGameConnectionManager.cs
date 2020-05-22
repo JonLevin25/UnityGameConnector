@@ -76,7 +76,7 @@ public class TestGameConnectionManager : MonoBehaviour
     private void EndSeries()
     {
         Debug.Log("Ending Game Series!");
-        var endIdx = _manifest.EndSceneBuildIdx;
+        var endIdx = _manifest.EndSceneIdx;
         SceneManager.LoadScene(endIdx);
     }
 

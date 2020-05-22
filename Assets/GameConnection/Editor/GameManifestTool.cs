@@ -79,7 +79,7 @@ public static class GameManifestTool
         // Allow last game scene + endScene not to be sequential. Redundant for now
         var endBufferScenes = Enumerable.Repeat(
             new EditorBuildSettingsScene(),
-            manifest.EndSceneBuildIdx - manifest.LastGameIdx - 1
+            manifest.EndSceneIdx - manifest.LastGameIdx - 1
         );
         
         var allBuildIndices = startBufferScenes
@@ -126,8 +126,8 @@ public static class GameManifestTool
             serializedManifest =>
             {
                 serializedManifest.FindProperty("startSceneIdx").intValue = startSceneIdx;
-                serializedManifest.FindProperty("endSceneIdx").intValue = endSceneIdx;
                 serializedManifest.FindProperty("firstGameIdx").intValue = firstGameSceneIdx;
+                serializedManifest.FindProperty("endSceneIdx").intValue = endSceneIdx;
             },
             "Set GameManifest Scene Indices"
         );

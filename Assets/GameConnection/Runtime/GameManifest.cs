@@ -30,6 +30,6 @@ namespace GameConnection
         public int FirstGameIdx => firstGameIdx;
         public int LastGameIdx => firstGameIdx + Games.Length - 1;
 
-        public int EndSceneBuildIdx => startSceneIdx;
+        public int EndSceneIdx => endSceneIdx;
     }
 }
