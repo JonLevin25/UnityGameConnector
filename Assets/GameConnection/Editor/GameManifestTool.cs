@@ -1,33 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Common;
-using Common.Editor;
-using Common.Scripts.PayloadTypes;
+using GameConnection;
+using GameConnection.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManifestTool : EditorWindow
+public static class GameManifestTool
 {
     private const string DialogTitle = "GameManifestTool";
+
+    private static List<Scene> _scenesToClose;
+    private static List<Scene> ScenesToClose
+    {
+        get => _scenesToClose ?? (_scenesToClose = new List<Scene>());
+        set => _scenesToClose = value;
+    }
+
     [MenuItem(EditorConsts.MenuItemsPrefix + "Generate Editor Manifest", priority = 1)]
     public static void GenerateManifest()
     {
         var confirm = EditorUtility.DisplayDialog(DialogTitle, "This will change all build scenes except the first. Continue?", "OK", "Cancel");
         if (!confirm) return;
 
-        var foundGames = FindGamesInProject();
-        var games = foundGames.Select((editorGame, i) =>
+        ScenesToClose = null;
+        try
         {
-            var buildIdx = i + 1; // Skip idx 0 because thats the Initial scene
-            return EditorToRuntimeGame(editorGame, buildIdx);
-        });
+            var foundGames = FindGamesInProject();
+            var games = foundGames.Select((editorGame, i) =>
+            {
+                var buildIdx = i + 1; // Skip idx 0 because thats the Initial scene
+                return EditorToRuntimeGame(editorGame, buildIdx);
+            }).ToArray();
 
-        var manifest = GetOrCreateManifest();
-        SetManifestGames(manifest, games);
+            var manifest = GetOrCreateManifest();
+            SetManifestGames(manifest, games);
+        }
+        finally
+        {
+            CloseScenes(_scenesToClose);
+        }
     }
 
     private static GameManifest GetOrCreateManifest()
@@ -42,17 +56,21 @@ public class GameManifestTool : EditorWindow
         return manifest;
     }
 
-    private static void SetManifestGames(GameManifest manifest, IEnumerable<Runtime_ConnectedGame> games)
+    private static void SetManifestGames(GameManifest manifest, Runtime_ConnectedGame[] games)
     {
-        // var serializedManifest = new SerializedObject(manifest);
-        // var connectedGamesProp = serializedManifest.FindProperty("connectedGames");
+        var serializedManifest = new SerializedObject(manifest);
         
-        
+        var connectedGamesProp = serializedManifest.FindProperty("connectedGames");
         Undo.RegisterCompleteObjectUndo(manifest, "Set Connected Games");
-        var gamesFieldInfo = typeof(GameManifest)
-            .GetField("connectedGames", BindingFlags.Instance | BindingFlags.NonPublic);
         
-        gamesFieldInfo.SetValue(manifest, games.ToArray());
+        EditorHelper.SetArrayObjectRefs(connectedGamesProp, games, 
+            (prop, game) => game.CopyTo(prop));
+        
+        // var gamesFieldInfo = typeof(GameManifest)
+        //     .GetField("connectedGames", BindingFlags.Instance | BindingFlags.NonPublic);
+        
+        // gamesFieldInfo.SetValue(manifest, games.ToArray());
+        serializedManifest.ApplyModifiedProperties();
         EditorUtility.SetDirty(manifest);
         
         
@@ -60,7 +78,7 @@ public class GameManifestTool : EditorWindow
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
-    
+
     private static Runtime_ConnectedGame EditorToRuntimeGame(Editor_ConnectedGame editorGame, int buildIdx)
     {
         if (editorGame == null) return null;
@@ -138,12 +156,20 @@ public class GameManifestTool : EditorWindow
         var wasLoaded = scene.isLoaded;
         if (!wasLoaded)
         {
-            scene = EditorSceneManager.OpenScene(scenePath);
+            scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+            ScenesToClose.Add(scene);
         }
 
         var rootGOs = scene.GetRootGameObjects();
-        if (!wasLoaded) EditorSceneManager.CloseScene(scene, true);
-
         return rootGOs;
+    }
+
+    private static void CloseScenes(IEnumerable<Scene> scenesToClose)
+    {
+        if (scenesToClose == null) return;
+        foreach (var scene in scenesToClose)
+        {
+            EditorSceneManager.CloseScene(scene, removeScene: true);
+        }
     }
 }
