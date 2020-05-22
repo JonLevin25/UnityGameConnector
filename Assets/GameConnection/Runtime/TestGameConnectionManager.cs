@@ -14,6 +14,7 @@ public class TestGameConnectionManager : MonoBehaviour
 {
     [SerializeField] private ConnectionDebugOverlay debugOverlay;
     [SerializeField] private GameCompletedMenu gameCompletedMenu;
+    [SerializeField] private EndMenu endMenu;
 
     private ScenePayloadBase _currPayload;
     private ScenePayloadBase _nextPayload; // Has value only after level finished and before user clicked 'next'/'restart' game
@@ -29,11 +30,19 @@ public class TestGameConnectionManager : MonoBehaviour
     public void Init()
     {
         gameCompletedMenu.Init(OnRestartGameClicked, OnNextGameClicked);
+        endMenu.Init(OnRestartSequenceClicked);
         LoadManifest();
         LoadNextGame(new StartPayload());
     }
 
     private void OnRestartGameClicked() => RestartCurrGame();
+
+    private void OnRestartSequenceClicked()
+    {
+        _gameIdx = 0;
+        _nextPayload = new StartPayload();
+        StartCoroutine(InitGame(_gameIdx, _nextPayload));
+    }
 
     private void OnNextGameClicked()
     {
@@ -72,7 +81,7 @@ public class TestGameConnectionManager : MonoBehaviour
         Debug.Log($"Initializing Game");
 
         _nextPayload = null;
-        gameCompletedMenu.gameObject.SetActive(false);
+        HideMenus();
         debugOverlay.SetGame(gameIdx, payload.ToString());
         
         var buildIdx = _manifest.GetGameSceneBuildIdx(gameIdx);
@@ -105,7 +114,7 @@ public class TestGameConnectionManager : MonoBehaviour
     private IEnumerator EndSeries()
     {
         Debug.Log("Ending Game Series!");
-        gameCompletedMenu.gameObject.SetActive(false);
+        ShowMenu(endMenu.gameObject);
         debugOverlay.SetEndScene();
         
         var endIdx = _manifest.EndSceneIdx;
@@ -124,5 +133,17 @@ public class TestGameConnectionManager : MonoBehaviour
         {
             throw new Exception("no manifest found in resources! did you generate one from the menu?");
         }
+    }
+
+    private void ShowMenu(GameObject menu)
+    {
+        HideMenus();
+        menu.SetActive(true);
+    }
+
+    private void HideMenus()
+    {
+        endMenu.gameObject.SetActive(false);
+        gameCompletedMenu.gameObject.SetActive(false);
     }
 }
