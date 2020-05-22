@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ccae704079f0d43af1ff6f1391b0ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _debugOverlay: {fileID: 1449144336}
+  debugOverlay: {fileID: 1449144336}
 --- !u!4 &437426133
 Transform:
   m_ObjectHideFlags: 0

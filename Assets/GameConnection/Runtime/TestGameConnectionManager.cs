@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using GameConnection;
 using GameConnection.Payloads;
@@ -10,7 +11,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class TestGameConnectionManager : MonoBehaviour
 {
-    [SerializeField] private ConnectionDebugOverlay _debugOverlay;
+    [SerializeField] private ConnectionDebugOverlay debugOverlay;
     
     private GameManifest _manifest;
     private int _gameIdx = -1;
@@ -33,18 +34,22 @@ public class TestGameConnectionManager : MonoBehaviour
         if (_manifest.Games.Length <= _gameIdx)
         {
             Debug.LogError("No more games found! Ending game series");
-            EndSeries();
+            StartCoroutine(EndSeries());
+            return;
         }
         
-        InitCurrGame(payload);
+        StartCoroutine(InitCurrGame(payload));
     }
     
-    private void InitCurrGame(ScenePayloadBase payload)
+    private IEnumerator InitCurrGame(ScenePayloadBase payload)
     {
         Debug.Log($"Initializing Game");
+        debugOverlay.SetGameIdx(_gameIdx);
         
         var buildIdx = _manifest.GetGameSceneBuildIdx(_gameIdx);
+        
         SceneManager.LoadScene(buildIdx);
+        yield return null; // Wait frame for scene to load
         
         var sceneRootGOs = SceneManager
             .GetActiveScene()
@@ -53,7 +58,7 @@ public class TestGameConnectionManager : MonoBehaviour
         // Assume single levelManager in scene, without a parent
         var levelManager = sceneRootGOs
             .Select(go => go.GetComponent<LevelManagerBase>())
-            .Single();
+            .Single(x => x != null);
 
         levelManager.OnEnd += OnLevelEnd;
         levelManager.Init(payload);
@@ -67,7 +72,7 @@ public class TestGameConnectionManager : MonoBehaviour
 
         if (payload is EndPayload)
         {
-            EndSeries();
+            StartCoroutine(EndSeries());
         }
         else
         {
@@ -75,11 +80,15 @@ public class TestGameConnectionManager : MonoBehaviour
         }
     }
     
-    private void EndSeries()
+    private IEnumerator EndSeries()
     {
         Debug.Log("Ending Game Series!");
+        debugOverlay.SetEndScene();
+        
         var endIdx = _manifest.EndSceneIdx;
+        
         SceneManager.LoadScene(endIdx);
+        yield return null; // Wait frame for scene to load
         
         var endController = FindObjectOfType<EndSceneController>();
         endController.Init(_manifest);
