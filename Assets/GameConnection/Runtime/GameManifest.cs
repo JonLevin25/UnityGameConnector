@@ -8,11 +8,25 @@ namespace GameConnection
     /// </summary>
     public class GameManifest : ScriptableObject
     {
-        [ReorderableList]
-        [SerializeField] private Runtime_ConnectedGame[] connectedGames;
+        // Build index of the first scene shown (should contain Game Connection initializer)
+        [ReadOnly, SerializeField] private int startSceneIdx = 0; 
         
-        // TODO: Order type validation
+        // Build index of the scene shown when all games completed
+        [ReadOnly, SerializeField] private int endSceneIdx;
+        
+        // Build index of the first scene that is a game (games are assumed to be sequential)
+        [ReadOnly, SerializeField] private int firstGameIdx = 1; 
+        
+        [ReorderableList]
+        [SerializeField] private ConnectedGame[] connectedGames;
 
-        public Runtime_ConnectedGame[] Games => connectedGames;
+        public ConnectedGame GetGame(int gameIdx) => connectedGames[gameIdx];
+        public int GetGameSceneBuildIdx(int gameIdx) => firstGameIdx + gameIdx;
+        
+        // TODO: Validations that sequential games have compatible payload types 
+        
+        public ConnectedGame[] Games => connectedGames;
+        public int StartSceneIdx => startSceneIdx;
+        public int EndSceneBuildIdx => startSceneIdx;
     }
 }

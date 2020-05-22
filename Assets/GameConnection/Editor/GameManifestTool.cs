@@ -28,12 +28,7 @@ public static class GameManifestTool
         ScenesToClose = null;
         try
         {
-            var foundGames = FindGamesInProject();
-            var games = foundGames.Select((editorGame, i) =>
-            {
-                var buildIdx = i + 1; // Skip idx 0 because thats the Initial scene
-                return EditorToRuntimeGame(editorGame, buildIdx);
-            }).ToArray();
+            var games = FindGamesInProject().ToArray();
 
             var manifest = GetOrCreateManifest();
             SetManifestGames(manifest, games);
@@ -56,7 +51,7 @@ public static class GameManifestTool
         return manifest;
     }
 
-    private static void SetManifestGames(GameManifest manifest, Runtime_ConnectedGame[] games)
+    private static void SetManifestGames(GameManifest manifest, ConnectedGame[] games)
     {
         var serializedManifest = new SerializedObject(manifest);
         
@@ -66,26 +61,14 @@ public static class GameManifestTool
         EditorHelper.SetArrayObjectRefs(connectedGamesProp, games, 
             (prop, game) => game.CopyTo(prop));
         
-        // var gamesFieldInfo = typeof(GameManifest)
-        //     .GetField("connectedGames", BindingFlags.Instance | BindingFlags.NonPublic);
-        
-        // gamesFieldInfo.SetValue(manifest, games.ToArray());
         serializedManifest.ApplyModifiedProperties();
+        
         EditorUtility.SetDirty(manifest);
-        
-        
-        // serializedManifest.ApplyModifiedProperties();
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
-
-    private static Runtime_ConnectedGame EditorToRuntimeGame(Editor_ConnectedGame editorGame, int buildIdx)
-    {
-        if (editorGame == null) return null;
-        return new Runtime_ConnectedGame(editorGame.InputPayloadType, editorGame.OutputPayloadType, buildIdx);
-    }
-
-    private static IEnumerable<Editor_ConnectedGame> FindGamesInProject()
+    
+    private static IEnumerable<ConnectedGame> FindGamesInProject()
     {
         var scenesWithLevelManagers = FindScenesWithLevelManagers();
         var games = scenesWithLevelManagers
@@ -93,7 +76,7 @@ public static class GameManifestTool
             {
                 var (scene, levelManager) = gameTup;
                 var (inputType, outputType) = GetPayloadTypes(levelManager);
-                return new Editor_ConnectedGame(inputType, outputType, scene);
+                return new ConnectedGame(inputType, outputType, scene);
             });
 
         return games;

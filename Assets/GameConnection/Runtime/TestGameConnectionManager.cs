@@ -34,14 +34,16 @@ public class TestGameConnectionManager : MonoBehaviour
             EndSeries();
         }
         
-        var nextGame = _manifest.Games[_gameIdx];
-        InitGame(nextGame, payload);
+        InitCurrGame(payload);
     }
-
-    private void InitGame(Runtime_ConnectedGame nextGame, ScenePayloadBase payload)
+    
+    private void InitCurrGame(ScenePayloadBase payload)
     {
         Debug.Log($"Initializing Game");
-        SceneManager.LoadScene(nextGame.SceneBuildIdx);
+        
+        var buildIdx = _manifest.GetGameSceneBuildIdx(_gameIdx);
+        SceneManager.LoadScene(buildIdx);
+        
         var sceneRootGOs = SceneManager
             .GetActiveScene()
             .GetRootGameObjects();
@@ -71,11 +73,11 @@ public class TestGameConnectionManager : MonoBehaviour
         }
     }
     
-    private static void EndSeries()
+    private void EndSeries()
     {
-        // TODO
         Debug.Log("Ending Game Series!");
-        throw new NotImplementedException();
+        var endIdx = _manifest.EndSceneBuildIdx;
+        SceneManager.LoadScene(endIdx);
     }
 
     private void LoadManifest()
