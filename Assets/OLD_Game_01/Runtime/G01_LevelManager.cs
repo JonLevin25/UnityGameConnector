@@ -1,4 +1,5 @@
 using System;
+using GameConnection.Payloads;
 using UnityEngine;
 
 public class G01_LevelManager : LevelManagerBase<ElementPayload, ElementPayload>

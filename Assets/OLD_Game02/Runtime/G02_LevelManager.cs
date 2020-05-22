@@ -1,5 +1,5 @@
-﻿using Common.Scripts.PayloadTypes;
-using Game_02.Scripts;
+﻿using Game_02.Scripts;
+using GameConnection.Payloads;
 using UnityEngine;
 using UnityEngine.Serialization;
 
