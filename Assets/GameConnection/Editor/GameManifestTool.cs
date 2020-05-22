@@ -41,6 +41,57 @@ public static class GameManifestTool
         }
     }
 
+    public static void SetBuildIndices(GameManifest manifest, SceneAsset startScene, SceneAsset endScene)
+    {
+        if (manifest == null) throw new ArgumentNullException($"Cannot {nameof(SetBuildIndices)} with null manifest!");
+        
+        var userConfirm =
+            ConfirmationPopup("This will set build scene indices, removing all current scenes. Continue?");
+        if (!userConfirm) return;
+
+        const int startIdx = 0;
+        const int firstGameIdx = 1;
+        
+        var lastGameIdx = firstGameIdx + manifest.Games.Length - 1;
+        var endIdx = lastGameIdx + 1;
+        
+        SetManifestScenes(manifest, startIdx, firstGameIdx, endIdx);
+        SetBuildScenes(manifest, startScene, endScene);
+    }
+
+    private static void SetBuildScenes(GameManifest manifest, SceneAsset startScene, SceneAsset endScene)
+    {
+        var gameBuildScenes = manifest.Games.Select(
+            (game, gameIdx) => new EditorBuildSettingsScene(game.ScenePath, true));
+
+        var startScenePath = AssetDatabase.GetAssetPath(startScene);
+        var endScenePath = AssetDatabase.GetAssetPath(endScene);
+        
+        var startBuildScene = new EditorBuildSettingsScene(startScenePath, true);
+        var endBuildScene = new EditorBuildSettingsScene(endScenePath, true);
+
+        // Allow startScene,firstGameScene not to be sequential. Redundant for now
+        var startBufferScenes = Enumerable.Repeat(
+            new EditorBuildSettingsScene(),
+            manifest.FirstGameIdx - manifest.StartSceneIdx - 1
+        );
+        
+        // Allow last game scene + endScene not to be sequential. Redundant for now
+        var endBufferScenes = Enumerable.Repeat(
+            new EditorBuildSettingsScene(),
+            manifest.EndSceneBuildIdx - manifest.LastGameIdx - 1
+        );
+        
+        var allBuildIndices = startBufferScenes
+            .Concat(gameBuildScenes)
+            .Concat(endBufferScenes)
+            .Prepend(startBuildScene)
+            .Append(endBuildScene)
+            .ToArray();
+
+        EditorBuildSettings.scenes = allBuildIndices;
+    }
+
     private static GameManifest GetOrCreateManifest()
     {
         var manifest = Resources.Load<GameManifest>(Consts.ManifestResourcePath);
@@ -67,6 +118,21 @@ public static class GameManifestTool
             "Set GameManifest Connected Games"
         );
     }
+
+    private static void SetManifestScenes(GameManifest manifest, int startSceneIdx, int firstGameSceneIdx, int endSceneIdx)
+    {
+        EditorHelper.UpdateAndSaveAsset(
+            manifest,
+            serializedManifest =>
+            {
+                serializedManifest.FindProperty("startSceneIdx").intValue = startSceneIdx;
+                serializedManifest.FindProperty("endSceneIdx").intValue = endSceneIdx;
+                serializedManifest.FindProperty("firstGameIdx").intValue = firstGameSceneIdx;
+            },
+            "Set GameManifest Scene Indices"
+        );
+    }
+
     private static IEnumerable<ConnectedGame> FindGamesInProject()
     {
         var scenesWithLevelManagers = FindScenesWithLevelManagers();
