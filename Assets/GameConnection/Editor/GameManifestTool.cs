@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 public static class GameManifestTool
 {
@@ -19,11 +20,12 @@ public static class GameManifestTool
         set => _scenesToClose = value;
     }
 
-    [MenuItem(EditorConsts.MenuItemsPrefix + "Generate Editor Manifest", priority = 1)]
+    [MenuItem(EditorConsts.MenuItemsPrefix + "Generate Editor Manifest")]
     public static void GenerateManifest()
     {
-        var confirm = EditorUtility.DisplayDialog(DialogTitle, "This will change all build scenes except the first. Continue?", "OK", "Cancel");
-        if (!confirm) return;
+        var userConfirm =
+            ConfirmationPopup("This will regenerate the manifest, resetting the game order. Continue?");
+        if (!userConfirm) return;
 
         ScenesToClose = null;
         try
@@ -145,6 +147,12 @@ public static class GameManifestTool
 
         var rootGOs = scene.GetRootGameObjects();
         return rootGOs;
+    }
+
+    private static bool ConfirmationPopup(string message, string ok = "OK", string cancel = "Cancel")
+    {
+        var confirm = EditorUtility.DisplayDialog(DialogTitle, message, ok, cancel);
+        return confirm;
     }
 
     private static void CloseScenes(IEnumerable<Scene> scenesToClose)
