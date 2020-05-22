@@ -1,7 +1,7 @@
-﻿using GameConnection;
+﻿using System.Linq;
+using GameConnection;
 using GameConnection.Editor;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class GameConnectionToolEditorWindow : EditorWindow
@@ -54,11 +54,11 @@ public class GameConnectionToolEditorWindow : EditorWindow
             }
         }
     }
-
+    
     private void LoadMissingData()
     {
-        if (!_startScene) _startScene = LoadScenePath(StartScenePathKey);
-        if (!_endScene) _endScene = LoadScenePath(EndScenePathKey);
+        if (!_startScene) _startScene = LoadSceneAsset(StartScenePathKey, EditorConsts.DefaultStartSceneName);
+        if (!_endScene) _endScene = LoadSceneAsset(EndScenePathKey, EditorConsts.DefaultEndSceneName);
     }
 
     private void SaveData()
@@ -78,10 +78,20 @@ public class GameConnectionToolEditorWindow : EditorWindow
         
         EditorPrefs.SetString(scenePathKey, path);
     }
-    private static SceneAsset LoadScenePath(string scenePathKey)
+    private static SceneAsset LoadSceneAsset(string scenePathKey, string fallbackSceneName = null)
     {
         var savedScenePath = EditorPrefs.GetString(scenePathKey);
-        if (string.IsNullOrEmpty(savedScenePath)) return null;
+        if (string.IsNullOrEmpty(savedScenePath))
+        {
+            var foundScenes = AssetDatabase
+                .FindAssets($"{fallbackSceneName} t: Scene")
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .Select(AssetDatabase.LoadAssetAtPath<SceneAsset>);
+
+            var scene = foundScenes.FirstOrDefault();
+            if (scene != null) SaveScenePath(scenePathKey, scene);
+            return scene;
+        }
         
         return AssetDatabase.LoadAssetAtPath<SceneAsset>(savedScenePath);
     }
