@@ -1,11 +1,12 @@
-using Common.Scripts.PayloadTypes;
-
-public class ElementPayload : ScenePayloadBase
+namespace GameConnection.Payloads
 {
-    public readonly Element Element;
-
-    public ElementPayload(Element element)
+    public class ElementPayload : ScenePayloadBase
     {
-        Element = element;
+        public readonly Element Element;
+
+        public ElementPayload(Element element)
+        {
+            Element = element;
+        }
     }
 }

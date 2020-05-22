@@ -1,4 +1,4 @@
-namespace Common.Scripts.PayloadTypes
+namespace GameConnection.Payloads
 {
     public abstract class ScenePayloadBase
     {

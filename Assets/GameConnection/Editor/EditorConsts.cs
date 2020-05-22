@@ -1,4 +1,4 @@
-namespace Common.Editor
+namespace GameConnection.Editor
 {
     public static class EditorConsts
     {

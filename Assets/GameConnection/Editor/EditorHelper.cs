@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Common.Editor
+namespace GameConnection.Editor
 {
     public static class EditorHelper
     {
@@ -40,7 +41,7 @@ namespace Common.Editor
             AssetDatabase.Refresh();
         }
 
-        public static void SetArrayMangedRefs<T>(SerializedProperty arrayProp, IReadOnlyList<T> values)
+        public static void SetArrayObjectRefs<T>(SerializedProperty arrayProp, IReadOnlyList<T> values, Action<SerializedProperty, T> setter)
         {
             if (!arrayProp.isArray)
             {
@@ -52,7 +53,8 @@ namespace Common.Editor
             var i = 0;
             foreach (var value in values)
             {
-                arrayProp.GetArrayElementAtIndex(i).managedReferenceValue = value;
+                var arrayElement = arrayProp.GetArrayElementAtIndex(i);
+                setter(arrayElement, value);
                 i++;
             }
         }

@@ -1,10 +1,12 @@
 using System;
-using Common.Scripts.PayloadTypes;
 using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace Common
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+namespace GameConnection
 {
     [Serializable]
     public class Runtime_ConnectedGame
@@ -19,6 +21,19 @@ namespace Common
         public string OutputPayloadTypeName => outputPayloadTypeName;
         public int SceneBuildIdx => sceneBuildIdx;
 
+#if UNITY_EDITOR 
+        public void CopyTo(SerializedProperty prop)
+        {
+            var inputTypeNameProp = prop.FindPropertyRelative(nameof(inputPayloadTypeName));
+            var outputTypeNameProp = prop.FindPropertyRelative(nameof(outputPayloadTypeName));
+            var sceneIdxTypeNameProp = prop.FindPropertyRelative(nameof(sceneBuildIdx));
+
+            inputTypeNameProp.stringValue = inputPayloadTypeName;
+            outputTypeNameProp.stringValue = outputPayloadTypeName;
+            sceneIdxTypeNameProp.intValue = sceneBuildIdx;
+        }
+#endif
+        
         public Runtime_ConnectedGame(Type inputPayloadTypeName, Type outputPayloadTypeName, int sceneBuildIdx)
         {
             if (!Helper.ValidatePayloadTypes(inputPayloadTypeName, outputPayloadTypeName)) return;
@@ -27,18 +42,5 @@ namespace Common
             this.outputPayloadTypeName = outputPayloadTypeName.FullName;
             this.sceneBuildIdx = sceneBuildIdx;
         }
-    }
-    
-    /// <summary>
-    /// A 
-    /// </summary>
-    public class GameManifest : ScriptableObject
-    {
-        [ReorderableList]
-        [SerializeField] private Runtime_ConnectedGame[] connectedGames;
-        
-        // TODO: Order type validation
-
-        public Runtime_ConnectedGame[] Games => connectedGames;
     }
 }

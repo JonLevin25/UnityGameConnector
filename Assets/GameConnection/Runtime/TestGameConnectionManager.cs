@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Common;
-using Common.Scripts.PayloadTypes;
+using GameConnection;
+using GameConnection.Payloads;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

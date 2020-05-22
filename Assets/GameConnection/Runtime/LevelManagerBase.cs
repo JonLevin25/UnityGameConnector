@@ -1,7 +1,6 @@
 ﻿using System;
-using Common.Scripts.PayloadTypes;
+using GameConnection.Payloads;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public abstract class LevelManagerBase<TInput, TOutput> : LevelManagerBase 
     where TInput : ScenePayloadBase

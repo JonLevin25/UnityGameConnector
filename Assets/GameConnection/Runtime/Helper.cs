@@ -1,8 +1,8 @@
 using System;
+using GameConnection.Payloads;
 using UnityEngine;
-using Common.Scripts.PayloadTypes;
 
-namespace Common
+namespace GameConnection
 {
     public static class Helper
     {

@@ -1,9 +1,7 @@
 using System;
-using Common.Scripts.PayloadTypes;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-namespace Common
+namespace GameConnection
 {
     [Serializable] // TODO: do I actually need to serialize this?
     public class Editor_ConnectedGame
