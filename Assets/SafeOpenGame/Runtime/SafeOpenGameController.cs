@@ -9,6 +9,7 @@ namespace NamesSelectionGame.Runtime
 {
     public class SafeOpenGameController : MiniGameControllerBase<NamePayload, EndPayload>
     {
+        [SerializeField] private CodeController codeController;
         [SerializeField] private GameObject demonModeParent; 
         [SerializeField] private GameObject angelModeParent;
             
@@ -26,6 +27,7 @@ namespace NamesSelectionGame.Runtime
         {
             Debug.Log("Safe Open game init");
             names = payload;
+            codeController.Init(payload.NemesisName, OnSafeUnlocked);
             if (IsDemonicName(payload.PlayerName))
             {
                 DemonMode();
@@ -36,7 +38,8 @@ namespace NamesSelectionGame.Runtime
             }
         }
 
-        // Called from scene
+        private void OnSafeUnlocked() => EndGame();
+        
         public void EndGame() => EndGame(new EndPayload());
 
         private void DemonMode()
