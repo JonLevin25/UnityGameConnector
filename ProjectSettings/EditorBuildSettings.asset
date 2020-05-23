@@ -4,5 +4,17 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/GameConnection/Scenes/GameConnection_StartScene.unity
+    guid: e662899fef915f44c9c0dc6fb77a85ff
+  - enabled: 1
+    path: Assets/NamesSelectionGame/Game01_SelectNames.unity
+    guid: 9f04b171f49f78d4093d15c2c8c454ee
+  - enabled: 1
+    path: Assets/SafeOpenGame/Game02_SafeOpen.unity
+    guid: 2ce7a5f4a1240904d891a39aada528a3
+  - enabled: 1
+    path: Assets/GameConnection/Scenes/GameConnection_EndScene.unity
+    guid: d1c1bf8837e8b1e4f9d8d282a950f355
   m_configObjects: {}
