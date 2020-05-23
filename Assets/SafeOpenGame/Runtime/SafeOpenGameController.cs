@@ -3,17 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GameConnection.Payloads;
+using GameConnection.Payloads.TestPayloads;
 using UnityEngine;
 
 namespace NamesSelectionGame.Runtime
 {
-    public class SafeOpenGameController : MiniGameControllerBase<NamePayload, EndPayload>
+    public class SafeOpenGameController : MiniGameControllerBase<NamesPayload, EndPayload>
     {
         [SerializeField] private CodeController codeController;
         [SerializeField] private GameObject demonModeParent; 
         [SerializeField] private GameObject angelModeParent;
             
-        private NamePayload names;
+        private NamesPayload _nameses;
         private IEnumerable<string> _demonicNames = new[]
         {
             "SATAN",
@@ -23,10 +24,10 @@ namespace NamesSelectionGame.Runtime
             "DEVIL"
         };
 
-        protected override void InitInternal(NamePayload payload)
+        protected override void InitInternal(NamesPayload payload)
         {
             Debug.Log("Safe Open game init");
-            names = payload;
+            _nameses = payload;
             codeController.Init(payload.NemesisName, OnSafeUnlocked);
             codeController.gameObject.SetActive(false);
             if (IsDemonicName(payload.PlayerName))

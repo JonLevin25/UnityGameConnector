@@ -1,4 +1,4 @@
-namespace GameConnection.Payloads
+namespace GameConnection.Payloads.TestPayloads
 {
     public class ElementPayload : ScenePayloadBase
     {

@@ -1,10 +1,11 @@
 using System;
 using GameConnection.Payloads;
+using GameConnection.Payloads.TestPayloads;
 using UnityEngine;
 
 namespace NamesSelectionGame.Runtime
 {
-    public class SelectNamesGameController : MiniGameControllerBase<StartPayload, NamePayload>
+    public class SelectNamesGameController : MiniGameControllerBase<StartPayload, NamesPayload>
     {
         [SerializeField] private NamePrompt playerNamePrompt;
         [SerializeField] private NamePrompt nemesisNamePrompt;
@@ -33,7 +34,7 @@ namespace NamesSelectionGame.Runtime
 
         private void EndGame()
         {
-            var payload = new NamePayload(playerName, nemesisName);
+            var payload = new NamesPayload(playerName, nemesisName);
             EndGame(payload);
         }
 

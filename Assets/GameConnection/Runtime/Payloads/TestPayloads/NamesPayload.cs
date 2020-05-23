@@ -1,11 +1,11 @@
-namespace GameConnection.Payloads
+namespace GameConnection.Payloads.TestPayloads
 {
-    public class NamePayload : ScenePayloadBase
+    public class NamesPayload : ScenePayloadBase
     {
         public readonly string PlayerName;
         public readonly string NemesisName;
 
-        public NamePayload(string playerName, string nemesisName)
+        public NamesPayload(string playerName, string nemesisName)
         {
             PlayerName = playerName;
             NemesisName = nemesisName;
