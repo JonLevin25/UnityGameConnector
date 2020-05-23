@@ -30,12 +30,12 @@ public class EnterCodeController : MonoBehaviour
     // Called from scene
     public void OnSubmitCode()
     {
-        _onCodeSubmitted?.Invoke(passInput.text);
+        _onCodeSubmitted?.Invoke(passInput.text.ToUpper());
     }
 
     private void UpdateDisplayText()
     {
-        var newValue = passInput.text;
+        var newValue = passInput.text.ToUpper();
         var padding = Mathf.Max(0, _passLength - newValue.Length);
         var str = $"{newValue}{new string(FillChar, padding)}";
         display.text = str;

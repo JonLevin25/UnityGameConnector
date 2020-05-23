@@ -58,8 +58,12 @@ namespace NamesSelectionGame.Runtime
             }
         }
 
-        private void OnSafeUnlocked() => EndGame();
-        
+        private void OnSafeUnlocked()
+        {
+            codeController.gameObject.SetActive(false);
+            EndGame();
+        }
+
         public void EndGame() => EndGame(new EndPayload());
 
         private void DemonMode()

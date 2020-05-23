@@ -14,8 +14,8 @@ public class CodeController : MonoBehaviour
     
     public void Init(string correctCode, Action onComplete)
     {
-        codeController.Init(correctCode, OnCodeAttempt);
-        _correctCode = correctCode;
+        _correctCode = correctCode.ToUpper();
+        codeController.Init(_correctCode, OnCodeAttempt);
         _onComplete = onComplete;
         HideScreens();
     }
