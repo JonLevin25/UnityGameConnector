@@ -28,6 +28,7 @@ namespace NamesSelectionGame.Runtime
             Debug.Log("Safe Open game init");
             names = payload;
             codeController.Init(payload.NemesisName, OnSafeUnlocked);
+            codeController.gameObject.SetActive(false);
             if (IsDemonicName(payload.PlayerName))
             {
                 DemonMode();

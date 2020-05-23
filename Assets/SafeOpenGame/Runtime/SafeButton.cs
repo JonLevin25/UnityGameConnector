@@ -15,6 +15,5 @@ public class SafeButton : MonoBehaviour
     {
         Debug.Log("Safe clicked!");
         codeController.gameObject.SetActive(true);
-        codeController.gameObject.SetActive(true);
     }
 }

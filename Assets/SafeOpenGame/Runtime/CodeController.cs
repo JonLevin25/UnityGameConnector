@@ -4,22 +4,22 @@ using UnityEngine;
 
 public class CodeController : MonoBehaviour
 {
+    [SerializeField] private EnterCodeController codeController;
     [SerializeField] private GameObject correctCodeScreen;
     [SerializeField] private GameObject wrongCodeScreen;
     [SerializeField] private float feedbackTime = 0.8f;
-    
     
     private string _correctCode;
     private Action _onComplete;
     
     public void Init(string correctCode, Action onComplete)
     {
+        codeController.Init(correctCode, OnCodeAttempt);
         _correctCode = correctCode;
         _onComplete = onComplete;
         HideScreens();
     }
-
-    // Called from scene
+    
     public void OnCodeAttempt(string code)
     {
         if (IsCorrect(code)) OnCodeCorrect();
