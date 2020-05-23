@@ -2,12 +2,12 @@ using System;
 using GameConnection.Payloads;
 using UnityEngine;
 
-public class G01_LevelManager : LevelManagerBase<ElementPayload, ElementPayload>
+public class G01MiniGameController : MiniGameControllerBase<ElementPayload, ElementPayload>
 {
     [SerializeField] private GameObject _fireGamePrefab;
     [SerializeField] private GameObject _windGamePrefab;
     
-    public static G01_LevelManager Instance { get; private set; }
+    public static G01MiniGameController Instance { get; private set; }
     private Element _gameElement;
 
     private void Awake()
@@ -38,7 +38,7 @@ public class G01_LevelManager : LevelManagerBase<ElementPayload, ElementPayload>
     public void EndGame(Element outputElement)
     {
         var payload = new ElementPayload(outputElement);
-        Exit(payload);
+        EndGame(payload);
     }
 
     private void StartWindGame()

@@ -3,7 +3,7 @@ using GameConnection.Payloads;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class G02_LevelManager : LevelManagerBase<ElementPayload, EndPayload>
+public class G02MiniGameController : MiniGameControllerBase<ElementPayload, EndPayload>
 {
     [FormerlySerializedAs("_config")] [SerializeField] private G02_Config config;
     [FormerlySerializedAs("_playerSpawn")] [SerializeField] private Transform playerSpawn;
@@ -13,7 +13,7 @@ public class G02_LevelManager : LevelManagerBase<ElementPayload, EndPayload>
     private ElementAssetsHolder _assets;
     private G02_CharController _activeChar;
     
-    public static G02_LevelManager Instance { get; private set; }
+    public static G02MiniGameController Instance { get; private set; }
 
     private void Awake()
     {
@@ -44,6 +44,6 @@ public class G02_LevelManager : LevelManagerBase<ElementPayload, EndPayload>
     // Called by charController thru singleton instance
     public void EndGame()
     {
-        Exit(new EndPayload());
+        EndGame(new EndPayload());
     }
 }

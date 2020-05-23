@@ -2,7 +2,7 @@
 using GameConnection.Payloads;
 using UnityEngine;
 
-public abstract class LevelManagerBase<TInput, TOutput> : LevelManagerBase 
+public abstract class MiniGameControllerBase<TInput, TOutput> : LevelManagerBase 
     where TInput : ScenePayloadBase
     where TOutput : ScenePayloadBase
 {
@@ -13,7 +13,7 @@ public abstract class LevelManagerBase<TInput, TOutput> : LevelManagerBase
     }
     protected abstract void InitInternal(TInput inPayload);
 
-    protected void Exit(TOutput outPayload) => InvokeEndEvent(outPayload);
+    public void EndGame(TOutput outPayload) => InvokeEndEvent(outPayload);
 }
 
 /// <summary>

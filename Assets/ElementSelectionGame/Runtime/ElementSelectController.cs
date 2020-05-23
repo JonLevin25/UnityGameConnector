@@ -2,11 +2,12 @@
 using System.Linq;
 using Game_01.Runtime;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class ElementSelectController : MonoBehaviour
 {
-    [SerializeField] private StartGameLevelManager _levelManager;
+    [FormerlySerializedAs("_levelManager")] [SerializeField] private ElementSelectGameController miniGameController;
     [SerializeField] private CycleActivateChildren _randomButtonCycler;
 
     private void Awake() => ElementButton.OnClicked += OnElementButtonClicked;
@@ -17,6 +18,6 @@ public class ElementSelectController : MonoBehaviour
     private void PickElement(Element element)
     {
         Debug.Log($"Element selected: {element}");
-        _levelManager.EndGame(element);
+        miniGameController.EndGame(element);
     }
 }

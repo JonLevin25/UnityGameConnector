@@ -184,7 +184,7 @@ public static class GameManifestTool
         var lvlManagerType = levelManager.GetType();
         
         // will return specified generic type e.g. typeof(LevelManager<Element, End>)
-        var lvlManagerGenericType = lvlManagerType.GetGenericBaseType(typeof(LevelManagerBase<,>)); 
+        var lvlManagerGenericType = lvlManagerType.GetGenericBaseType(typeof(MiniGameControllerBase<,>)); 
         if (lvlManagerGenericType != null)
         {
             // Find types (e.g. LevelManager<ElementPayload, EndPayload>) 

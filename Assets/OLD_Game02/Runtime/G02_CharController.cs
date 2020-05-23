@@ -58,7 +58,7 @@ namespace Game_02.Scripts
         private void OnEnemyCollision(Enemy enemy)
         {
             Debug.Log("Hit by enemy! ending game!");
-            G02_LevelManager.Instance.EndGame();
+            G02MiniGameController.Instance.EndGame();
         }
 
         void FixedUpdate()
