@@ -18,7 +18,7 @@ MonoBehaviour:
   connectedGames:
   - scenePath: Assets/NamesSelectionGame/Game01_SelectNames.unity
     inputPayloadTypeName: GameConnection.Payloads.StartPayload
-    outputPayloadTypeName: GameConnection.Payloads.NamePayload
+    outputPayloadTypeName: GameConnection.Payloads.TestPayloads.NamesPayload
   - scenePath: Assets/SafeOpenGame/Game02_SafeOpen.unity
-    inputPayloadTypeName: GameConnection.Payloads.NamePayload
+    inputPayloadTypeName: GameConnection.Payloads.TestPayloads.NamesPayload
     outputPayloadTypeName: GameConnection.Payloads.EndPayload
