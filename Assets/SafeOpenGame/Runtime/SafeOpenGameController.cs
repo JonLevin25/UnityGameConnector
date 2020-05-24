@@ -27,7 +27,8 @@ namespace NamesSelectionGame.Runtime
             "LEO",
             "666",
             "ANTICHRIST",
-            "DEVIL"
+            "DEVIL",
+            "VOLDEMORT"
         };
 
         private IEnumerator Start()
@@ -54,7 +55,8 @@ namespace NamesSelectionGame.Runtime
             }
             else if (IsDemonicName(payload.NemesisName))
             {
-                AngelMode();
+                // AngelMode();
+                DemonMode();
             }
         }
 
@@ -71,12 +73,12 @@ namespace NamesSelectionGame.Runtime
             Debug.Log("Activated Demon Mode");
             demonModeParent.SetActive(true);
         }
-
-        private void AngelMode()
-        {
-            angelModeParent.SetActive(true);
-            Debug.Log("Activated Angel Mode");
-        }
+        //
+        // private void AngelMode()
+        // {
+        //     angelModeParent.SetActive(true);
+        //     Debug.Log("Activated Angel Mode");
+        // }
 
         private bool IsDemonicName(string name) => _demonicNames.Contains(name.ToUpper());
     }
